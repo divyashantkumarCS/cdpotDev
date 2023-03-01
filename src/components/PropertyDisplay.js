@@ -86,7 +86,7 @@ function PropertyDisplay() {
     function handleSubmit() {
         setShow(false);
 
-        axios.post("http://localhost:9191/addProperty", form, {
+        axios.post("http://localhost:9191/properties/addProperty", form, {
             headers: { "Content-Type": "multipart/form-data" },
         }).then(res => {
             console.log("RESPONSE DATA", res?.data?.data[0]);
@@ -102,7 +102,7 @@ function PropertyDisplay() {
     }
 
     function updateDisplay() {
-        axios.get('http://localhost:9191/getAllProperties').then(res => {
+        axios.get('http://localhost:9191/properties/getAllProperties').then(res => {
             console.log("getAllProperties RESPONSE OBJECT", res);
             const data = res?.data?.data;
             setPostedProperties(data);
@@ -110,6 +110,14 @@ function PropertyDisplay() {
         }).catch(e => {
             console.log(e.message);
         });
+    }
+
+    function deleteProperty(id) {
+        
+        axios.delete(`http://localhost:9191/properties/deleteProject`, {data: {"id" : id}}).then(res => {
+            console.log(res);
+            updateDisplay();
+        })
     }
 
     useEffect(() => {
@@ -146,13 +154,12 @@ function PropertyDisplay() {
                                                     </Carousel.Item>
                                                 )
                                             }) : (<img src={image} alt="Property" />)     
-                                        }                                                
-                                    </Carousel>
-                                                
-                                        
+                                        }                                               
+                                    </Carousel>                                       
                                 </div>
                                 <div className='descCont'>
                                     <h3><u>porperty Details</u></h3>
+                               
                                     <div>
                                         <p>carpetArea : {ele.carpetArea}</p>
                                         <p>noOfBedrooms : {ele.noOfBedrooms}, &nbsp;&nbsp; noOfBathroom : {ele.noOfBathroom}</p>
@@ -164,17 +171,18 @@ function PropertyDisplay() {
                                         <p>otherAminities : {ele.otherAminities}</p>
                                     </div>
                                 </div>
+                                <Button onClick={() => deleteProperty(ele.propID)}>Delete Project</Button>
                             </div>
                         )
                     })
                         : (<div className="displayCard">
-                            <div className='imgCont'>
-                                <img src={image} alt="Property" />
-                            </div>
-                            <div className='descCont'>
-                                <h5>porperty Details</h5>
-                            </div>
-                        </div>)
+                                <div className='imgCont'>
+                                    <img src={image} alt="Property" />
+                                </div>
+                                <div className='descCont'>
+                                    <h5>porperty Details</h5>
+                                </div>
+                            </div>)
                 }
 
                 {/* <div className="displayCard">

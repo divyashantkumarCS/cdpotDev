@@ -1,7 +1,7 @@
 import { LoginSocialGoogle } from 'reactjs-social-login';
 import { GoogleLoginButton } from 'react-social-login-buttons';
 import { useState, useCallback, useEffect } from 'react';
-import axios from 'axios';
+import axios, { AxiosHeaders } from 'axios';
 
 function GoogleLoginLogics() {
   const [provider, setProvider] = useState('')
@@ -17,6 +17,23 @@ function GoogleLoginLogics() {
       setProvider('')
       alert('logout success')
     }, [])
+
+    function callLoginApi(response) {
+      axios.post("http://localhost:9191/users/oAuthLogin", 
+              {
+                "email": response?.data?.email,
+                "name": response?.data?.name,
+                "provider" : response?.provider
+              }, 
+              {
+                headers: AxiosHeaders,
+              }
+        ).then(res => {
+            console.log("RESPONSE DATA", res);
+        }).catch(e => {
+            console.log(e.message);
+        });
+    }
 
     // function getUserData() {
     //   const url = '';
@@ -43,7 +60,7 @@ function GoogleLoginLogics() {
             onResolve={(response) => {
               setProvider(response.provider)
               setProfile(response.data)
-              // console.log(response.data, response.provider);
+              callLoginApi(response)
               console.log(response);
             }}
             onReject={(err) => {
